@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">Kalendarz</string>
+    <string name="render_failed">Coś poszło nie tak..</string>
+    <string name="holiday_fetch_failed">Nie udało się uaktualnić świąt</string>
+</resources>
