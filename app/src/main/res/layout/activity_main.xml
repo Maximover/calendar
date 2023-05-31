@@ -5,78 +5,136 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
+    android:background="@color/dark_gray"
     tools:context=".MainActivity" >
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@color/dark_gray"
-        android:orientation="vertical">
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:layout_weight="0"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/month_label"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:paddingHorizontal="10dp"
+            android:layout_weight="1"
+            android:text=""
+            android:textColor="@color/white"
+            android:textSize="32sp" />
+
+        <ImageButton
+            android:id="@+id/settings_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@color/white"
+            android:contentDescription="settings"
+            app:srcCompat="@android:drawable/ic_menu_manage" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="0.3in"
+        android:paddingHorizontal="10dp"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/day_label_1"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_margin="5dp"
+            android:textColor="@color/powder_blue"
+            android:textAlignment="center"
+            android:text="@string/day_short_1" />
+        <TextView
+            android:id="@+id/day_label_2"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_margin="5dp"
+            android:padding="0dp"
+            android:textColor="@color/powder_blue"
+            android:textAlignment="center"
+            android:text="@string/day_short_2" />
+        <TextView
+            android:id="@+id/day_label_3"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_margin="5dp"
+            android:padding="0dp"
+            android:textColor="@color/powder_blue"
+            android:textAlignment="center"
+            android:text="@string/day_short_3" />
+        <TextView
+            android:id="@+id/day_label_4"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_margin="5dp"
+            android:padding="0dp"
+            android:textColor="@color/powder_blue"
+            android:textAlignment="center"
+            android:text="@string/day_short_4" />
+        <TextView
+            android:id="@+id/day_label_5"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_margin="5dp"
+            android:padding="0dp"
+            android:textColor="@color/powder_blue"
+            android:textAlignment="center"
+            android:text="@string/day_short_5" />
+        <TextView
+            android:id="@+id/day_label_6"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_margin="5dp"
+            android:padding="0dp"
+            android:textColor="@color/powder_blue"
+            android:textAlignment="center"
+            android:text="@string/day_short_6" />
+        <TextView
+            android:id="@+id/day_label_7"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_margin="5dp"
+            android:textColor="@color/powder_blue"
+            android:textAlignment="center"
+            android:text="@string/day_short_7" />
+    </LinearLayout>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        tools:ignore="SpeakableTextPresentCheck">
 
         <LinearLayout
+            android:id="@+id/calendar_body"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="center"
-            android:layout_weight="0"
-            android:orientation="horizontal">
-
-            <TextView
-                android:id="@+id/month_label"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:paddingHorizontal="10dp"
-                android:layout_weight="1"
-                android:text="Maj"
-                android:textColor="@color/white"
-                android:textSize="32sp" />
-
-            <ImageButton
-                android:id="@+id/settings_button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:backgroundTint="@color/white"
-                app:srcCompat="@android:drawable/ic_menu_manage" />
-
-        </LinearLayout>
-
-        <ScrollView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_weight="1">
-
-            <LinearLayout
-                android:id="@+id/calendar_body"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:layout_gravity="center"
-                android:orientation="vertical"
-                android:paddingHorizontal="10dp" />
-        </ScrollView>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="center"
-            android:layout_weight="0"
+            android:layout_gravity="start"
+            android:gravity="start"
+            android:orientation="vertical"
             android:paddingHorizontal="10dp">
 
-            <Button
-                android:id="@+id/backward_button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="10dp"
-                android:text="a" />
-
-            <Button
-                android:id="@+id/forward_button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="10dp"
-                android:text="b" />
         </LinearLayout>
-    </LinearLayout>
+    </ScrollView>
+
+    <View
+        android:id="@+id/calendar_control"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="3"
+        android:background="@color/dark_gray" />
 
 </LinearLayout>

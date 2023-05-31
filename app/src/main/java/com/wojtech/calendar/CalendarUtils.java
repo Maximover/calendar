@@ -16,6 +16,7 @@ public class CalendarUtils {
     public static final DateFormat PL_DATE_FORMAT = new SimpleDateFormat("dd.MM.yyyy", Locale.ENGLISH);
     public static final DateFormat US_DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
     public static final DateFormat YEAR_FORMAT = new SimpleDateFormat("yyyy", Locale.ENGLISH);
+    public static CalendarTile[][] calendar_tiles = new CalendarTile[6][7];
     protected static Date base_date;
     protected static String base_date_str;
     protected static String current_date;
@@ -77,25 +78,24 @@ public class CalendarUtils {
             week_layout.setOrientation(LinearLayout.HORIZONTAL);
             week_layout.setHorizontalGravity(1);
             for(int j=1; j<=7; j++){
-                CalendarTile tile;
+                CalendarTile tile = new CalendarTile(application_context, j==7);
                 if (day_render > days_in_current_month) {
-                    // previous month overlapping days
-                    tile = new CalendarTile(application_context, CalendarTile.STYLE_NONACTIVE_MONTH);
+                    // previous month' overlapping days
                     tile.setText(String.valueOf(days_in_previous_month - (day_render - days_in_current_month) + 1));
+                    tile.setActive(false);
                 } else if (day_render > 0) {
-                    // this month
-                    if(days_in_current_month - day_render + 1 == Integer.parseInt(current_date.substring(0,2)) && isCurrentMonth()) {
-                        tile = new CalendarTile(application_context, CalendarTile.STYLE_ACTIVE_DAY);
-                    } else {
-                        tile = new CalendarTile(application_context, CalendarTile.STYLE_ACTIVE_MONTH);
-                    }
+                    // this month' days
                     tile.setText(String.valueOf(days_in_current_month - day_render + 1));
+                    if(days_in_current_month - day_render + 1 == Integer.parseInt(current_date.substring(0,2)) && isCurrentMonth()) {
+                        tile.setToday();
+                    }
                 } else {
-                    // next month overlapping days
-                    tile = new CalendarTile(application_context, CalendarTile.STYLE_NONACTIVE_MONTH);
+                    // next month' overlapping days
                     tile.setText(String.valueOf(Math.abs(day_render) + 1));
+                    tile.setActive(false);
                 }
                 tile.setTag(tile.getText().toString() + base_date_str.substring(2));
+                calendar_tiles[i-1][j-1] = tile;
                 day_render -= 1 ;
                 week_layout.addView(tile);
             }

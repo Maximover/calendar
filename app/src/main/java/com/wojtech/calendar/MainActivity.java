@@ -6,7 +6,8 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.annotation.SuppressLint;
 import android.os.Bundle;
-import android.widget.Button;
+import android.view.MotionEvent;
+import android.view.View;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -16,6 +17,7 @@ import java.util.Date;
 
 public class MainActivity extends AppCompatActivity {
     private LinearLayout calendar_body;
+    private float x1, x2;
 
     @SuppressLint("SetTextI18n")
     @Override
@@ -28,8 +30,7 @@ public class MainActivity extends AppCompatActivity {
 
         ActionBar bar = this.getSupportActionBar();
         calendar_body = findViewById(R.id.calendar_body);
-        Button forward_button = findViewById(R.id.forward_button);
-        Button backward_button = findViewById(R.id.backward_button);
+        View calendar_control = findViewById(R.id.calendar_control);
         ImageButton settings_button = findViewById(R.id.settings_button);
         TextView month_label = findViewById(R.id.month_label);
         try {
@@ -47,25 +48,49 @@ public class MainActivity extends AppCompatActivity {
             System.out.println(e.getMessage());
         }
 
-        backward_button.setOnClickListener((v)->{
-            try {
-                CalendarUtils.addMonthsToCalendar(-1);
-                CalendarUtils.renderMonth(getApplicationContext(), calendar_body);
-                month_label.setText(CalendarUtils.getMonthName()+" "+CalendarUtils.getYear());
-            } catch (Exception e) {
-                Toast.makeText(getApplicationContext(), getResources().getText(R.string.render_failed), Toast.LENGTH_SHORT).show();
-                System.out.println(e.getMessage());
+        calendar_control.setOnTouchListener((view, event) -> {
+            int min_distance = 100;
+            float delta;
+            switch (event.getAction()) {
+                case MotionEvent.ACTION_DOWN:
+                    x1 = event.getX();
+                    return true;
+                case MotionEvent.ACTION_UP:
+                    x2 = event.getX();
+                    delta = x2-x1;
+                    if (Math.abs(delta) > min_distance) {
+                        // left or right
+                        if (delta < 0) {
+                            try {
+                                CalendarUtils.addMonthsToCalendar(1);
+                                CalendarUtils.renderMonth(getApplicationContext(), calendar_body);
+                                month_label.setText(CalendarUtils.getMonthName()+" "+CalendarUtils.getYear());
+                            } catch (Exception e) {
+                                Toast.makeText(getApplicationContext(), getResources().getText(R.string.render_failed), Toast.LENGTH_SHORT).show();
+                                System.out.println(e.getMessage());
+                            }
+                            return true;
+                        }
+                        if (delta > 0) {
+                            try {
+                                CalendarUtils.addMonthsToCalendar(-1);
+                                CalendarUtils.renderMonth(getApplicationContext(), calendar_body);
+                                month_label.setText(CalendarUtils.getMonthName()+" "+CalendarUtils.getYear());
+                            } catch (Exception e) {
+                                Toast.makeText(getApplicationContext(), getResources().getText(R.string.render_failed), Toast.LENGTH_SHORT).show();
+                                System.out.println(e.getMessage());
+                            }
+                            return true;
+                        }
+                    } else {
+                        return false;
+                    }
             }
+            return calendar_control.performClick();
         });
-        forward_button.setOnClickListener((v)->{
-            try {
-                CalendarUtils.addMonthsToCalendar(1);
-                CalendarUtils.renderMonth(getApplicationContext(), calendar_body);
-                month_label.setText(CalendarUtils.getMonthName()+" "+CalendarUtils.getYear());
-            } catch (Exception e) {
-                Toast.makeText(getApplicationContext(), getResources().getText(R.string.render_failed), Toast.LENGTH_SHORT).show();
-                System.out.println(e.getMessage());
-            }
+
+        settings_button.setOnClickListener((v) -> {
+
         });
     }
 }

@@ -11,4 +11,7 @@
     <color name="gray">#A29C9B</color>
     <color name="dark_gray">#17181c</color>
     <color name="powder_blue">#9EADC8</color>
+    <color name="light_red">#FF0000</color>
+    <color name="red">#AA2222</color>
+    <color name="dark_red">#660000</color>
 </resources>

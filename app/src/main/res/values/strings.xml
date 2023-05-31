@@ -2,4 +2,11 @@
     <string name="app_name">Calendar</string>
     <string name="render_failed">Something went wrong..</string>
     <string name="holiday_fetch_failed">Failed to update holidays</string>
+    <string name="day_short_1">Mon</string>
+    <string name="day_short_2">Tue</string>
+    <string name="day_short_3">Wed</string>
+    <string name="day_short_4">Thu</string>
+    <string name="day_short_5">Fri</string>
+    <string name="day_short_6">Sat</string>
+    <string name="day_short_7">Sun</string>
 </resources>
