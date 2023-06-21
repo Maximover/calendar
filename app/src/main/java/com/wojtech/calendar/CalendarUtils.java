@@ -2,19 +2,27 @@ package com.wojtech.calendar;
 
 import android.content.Context;
 import android.widget.LinearLayout;
+import android.widget.Toast;
 
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Locale;
 import java.util.Objects;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadLocalRandom;
 
 public class CalendarUtils {
     public static final DateFormat PL_DATE_FORMAT = new SimpleDateFormat("dd.MM.yyyy", Locale.ENGLISH);
     public static final DateFormat US_DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
+    public static final DateFormat MONTH_YEAR_FORMAT = new SimpleDateFormat("MM.yyyy", Locale.ENGLISH);
     public static final DateFormat YEAR_FORMAT = new SimpleDateFormat("yyyy", Locale.ENGLISH);
     public static CalendarTile[][] calendar_tiles = new CalendarTile[6][7];
     protected static Date base_date;
@@ -69,7 +77,7 @@ public class CalendarUtils {
             first_day_of_current_month_nr = 0;
             days_in_current_month = 0;
             days_in_previous_month = 0;
-            System.out.println(e.getMessage());
+            e.printStackTrace();
         }
         assert first_day_of_current_month_nr > 0 && days_in_current_month > 0;
         int day_render = days_in_current_month + first_day_of_current_month_nr - 1;
@@ -79,29 +87,100 @@ public class CalendarUtils {
             week_layout.setHorizontalGravity(1);
             for(int j=1; j<=7; j++){
                 CalendarTile tile = new CalendarTile(application_context, j==7);
+                Calendar c = Calendar.getInstance();
+                c.setTime(base_date);
+                c.add(Calendar.MONTH, -1);
+                String previous_month_year = MONTH_YEAR_FORMAT.format(c.getTime());
+                c.add(Calendar.MONTH, 2);
+                String next_month_year = MONTH_YEAR_FORMAT.format(c.getTime());
+                c.add(Calendar.MONTH, 1);
                 if (day_render > days_in_current_month) {
                     // previous month' overlapping days
                     tile.setText(String.valueOf(days_in_previous_month - (day_render - days_in_current_month) + 1));
+                    tile.setTag(tile.getText().toString() + "." + previous_month_year);
                     tile.setActive(false);
+
                 } else if (day_render > 0) {
                     // this month' days
                     tile.setText(String.valueOf(days_in_current_month - day_render + 1));
+                    tile.setTag(tile.getText().toString() + base_date_str.substring(2));
                     if(days_in_current_month - day_render + 1 == Integer.parseInt(current_date.substring(0,2)) && isCurrentMonth()) {
                         tile.setToday();
                     }
                 } else {
                     // next month' overlapping days
                     tile.setText(String.valueOf(Math.abs(day_render) + 1));
+                    tile.setTag(tile.getText().toString() + "." + next_month_year);
                     tile.setActive(false);
+
                 }
-                tile.setTag(tile.getText().toString() + base_date_str.substring(2));
                 calendar_tiles[i-1][j-1] = tile;
                 day_render -= 1 ;
                 week_layout.addView(tile);
             }
             calendar_body.addView(week_layout);
         }
+        fillHolidays(application_context);
     }
+
+    public static void randomizeHolidays(int randomized_days){
+        for(int i=0; i<randomized_days; i++)
+            calendar_tiles[ThreadLocalRandom.current().nextInt(0, 6)][ThreadLocalRandom.current().nextInt(0, 7)].setHoliday(true);
+    }
+
+    /**
+     * Connects to a holiday api and fills in days that appear to be holidays
+     */
+    private static void fillHolidays(Context context){
+        ArrayList<HashMap<String, String>> holidays;
+        Database db = new Database(context);
+        holidays = db.getMonthsHolidays(base_date_str);
+        // if there aren't holidays saved for this month fetch, then some from api and save them if there is internet connection
+        if (holidays.size() == 0 && ApiHandler.checkForInternet(context)){
+            CountDownLatch latch = new CountDownLatch(1);
+            try {
+                ExecutorService thread_service = Executors.newSingleThreadExecutor();
+                ApiHandler api = new ApiHandler(base_date, latch);
+                thread_service.execute(api);
+                latch.await();
+                holidays = api.getHolidayDataArray();
+                for (HashMap<String, String> holiday : holidays) {
+                    if (!db.isSavedHoliday(holiday.get(Database.HOLIDAYS_DATE)))
+                        db.addHoliday(holiday.get(Database.HOLIDAYS_NAME), holiday.get(Database.HOLIDAYS_DATE), holiday.get(Database.HOLIDAYS_TAG));
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        db.close();
+        // no holidays saved and none were fetched via api
+        if (holidays.size() == 0) {
+            Toast.makeText(context, context.getResources().getText(R.string.holiday_fetch_failed), Toast.LENGTH_SHORT).show();
+            return;
+        }
+        for (int i=0;i<6;i++) {
+            for (int j=0;j<7;j++){
+                CalendarTile tile = calendar_tiles[i][j];
+                String tile_date;
+                try {
+                    Date tile_date_obj = PL_DATE_FORMAT.parse(tile.getTag().toString());
+                    assert tile_date_obj != null;
+                    tile_date = PL_DATE_FORMAT.format(tile_date_obj);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    continue;
+                }
+                for (HashMap<String, String> holiday : holidays) {
+                    if (tile_date.equals(holiday.get(Database.HOLIDAYS_DATE))) {
+                        tile.setHoliday(true);
+                        break;
+                    }
+                }
+            }
+        }
+
+    }
+
     /**
      * Returns number for first day of month in given date.
      * @param date date

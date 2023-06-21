@@ -36,18 +36,19 @@ public class MainActivity extends AppCompatActivity {
         try {
             assert bar != null;
             bar.hide();
-        }catch (Exception e){
+        } catch (Exception e) {
             System.out.println(e.getMessage());
         }
 
-        try{
+        try {
             month_label.setText(CalendarUtils.getMonthName()+" "+CalendarUtils.getYear());
             CalendarUtils.renderMonth(getApplicationContext(), calendar_body);
-        }catch (Exception e){
+        } catch (Exception e) {
             Toast.makeText(getApplicationContext(), getResources().getText(R.string.render_failed), Toast.LENGTH_SHORT).show();
             System.out.println(e.getMessage());
         }
 
+        // calendar month control via swipe gesture
         calendar_control.setOnTouchListener((view, event) -> {
             int min_distance = 100;
             float delta;
@@ -87,10 +88,6 @@ public class MainActivity extends AppCompatActivity {
                     }
             }
             return calendar_control.performClick();
-        });
-
-        settings_button.setOnClickListener((v) -> {
-
         });
     }
 }

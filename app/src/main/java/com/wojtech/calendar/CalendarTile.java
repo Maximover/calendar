@@ -86,6 +86,10 @@ public class CalendarTile extends androidx.appcompat.widget.AppCompatTextView {
         else this.setTileStyle(STYLE_NONACTIVE_MONTH);
     }
 
+    /**
+     * Sets whether this tile should be seen as a holiday
+     * @param is_holiday bool value
+     */
     public void setHoliday(boolean is_holiday){
         this.is_holiday = is_holiday;
         if (this.is_active) this.setTileStyle(STYLE_HOLIDAY);
